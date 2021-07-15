@@ -4,6 +4,7 @@ import onnxruntime
 import onnx
 import cv2
 
+import argparse
 import json
 import time
 
@@ -49,7 +50,13 @@ def postprocess(result):
 
 
 if __name__ == '__main__':
-    model_name = "efficientnet_lite0"
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--model_name', type=str, required=1, 
+                        help='model name')
+    args = parser.parse_args()
+    print(args)
+    model_name = args.model_name
     onnx_name = "{}.onnx".format(model_name)
     session = onnxruntime.InferenceSession(onnx_name, None)
 
