@@ -9,3 +9,7 @@ https://github.com/lukemelas/EfficientNet-PyTorch
 - shufflenetv1  
 https://github.com/megvii-model/ShuffleNet-Series/tree/master/ShuffleNetV1  
 
+- shufflenetv2  
+https://github.com/megvii-model/ShuffleNet-Series/tree/master/ShuffleNetV2  
+
+

@@ -31,6 +31,11 @@ network_param = {
         "TO_RGB": True,
         "MEAN": [0.485, 0.456, 0.406],
         "STDDEV": [0.229, 0.224, 0.225]
+    },
+    "squeezenet1_0": {
+        "TO_RGB": True,
+        "MEAN": [0.485, 0.456, 0.406],
+        "STDDEV": [0.229, 0.224, 0.225]
     }
 }
 
