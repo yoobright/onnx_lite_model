@@ -11,9 +11,18 @@ import time
 
 D_TYPE = "float32"
 
-MEAN_RGB = [0.498, 0.498, 0.498]
-STDDEV_RGB = [0.502, 0.502, 0.502]
-
+network_param = {
+    "shufflenetv1": {
+        "TO_RGB": False,
+        "MEAN": [0, 0, 0],
+        "STDDEV": [0.00392, 0.00392, 0.00392]
+    },
+    "efficientnet_lite0": {
+        "TO_RGB": True,
+        "MEAN": [0.498, 0.498, 0.498],
+        "STDDEV": [0.502, 0.502, 0.502]
+    }
+}
 
 
 def load_labels(path):
@@ -22,13 +31,13 @@ def load_labels(path):
     return np.asarray(data)
 
 
-def preprocess(input_data, size):
+def preprocess(input_data, size, model_name):
     # convert the input data into the float32 input
     img_data = input_data.astype(D_TYPE)
 
     # normalize
-    mean_vec = np.array(MEAN_RGB)
-    stddev_vec = np.array(STDDEV_RGB)
+    mean_vec = np.array(network_param[model_name]['MEAN'])
+    stddev_vec = np.array(network_param[model_name]['STDDEV'])
 
     norm_img_data = np.zeros(img_data.shape).astype(D_TYPE)
     for i in range(img_data.shape[0]):
@@ -70,11 +79,12 @@ if __name__ == '__main__':
 
     labels = load_labels('imagenet-simple-labels.json')
     image = cv2.imread('space_shuttle_299x299.jpg')
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    if network_param[model_name]['TO_RGB']:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = cv2.resize(image, (size, size))
 
     image_data = image.transpose(2, 0, 1)
-    input_data = preprocess(image_data, size)
+    input_data = preprocess(image_data, size, model_name)
 
     start = time.time()
     raw_result = session.run([], {input_name: input_data})
