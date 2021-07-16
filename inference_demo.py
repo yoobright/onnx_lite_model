@@ -17,6 +17,11 @@ network_param = {
         "MEAN": [0, 0, 0],
         "STDDEV": [0.00392, 0.00392, 0.00392]
     },
+    "shufflenetv2": {
+        "TO_RGB": False,
+        "MEAN": [0, 0, 0],
+        "STDDEV": [0.00392, 0.00392, 0.00392]
+    },
     "efficientnet_lite0": {
         "TO_RGB": True,
         "MEAN": [0.498, 0.498, 0.498],
