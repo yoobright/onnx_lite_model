@@ -21,6 +21,11 @@ network_param = {
         "TO_RGB": True,
         "MEAN": [0.498, 0.498, 0.498],
         "STDDEV": [0.502, 0.502, 0.502]
+    },
+    "efficientnet_b0": {
+        "TO_RGB": True,
+        "MEAN": [0.485, 0.456, 0.406],
+        "STDDEV": [0.229, 0.224, 0.225]
     }
 }
 
