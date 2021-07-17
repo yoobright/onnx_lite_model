@@ -55,6 +55,11 @@ network_param = {
         "TO_RGB": True,
         "MEAN": [0.485, 0.456, 0.406],
         "STDDEV": [0.229, 0.224, 0.225]
+    },
+    "efficientnetv2_b0": {
+        "TO_RGB": True,
+        "MEAN": [0.498, 0.498, 0.498],
+        "STDDEV": [0.502, 0.502, 0.502]
     }
 }
 
@@ -127,10 +132,12 @@ if __name__ == '__main__':
     image_data = image.transpose(2, 0, 1)
     input_data = preprocess(image_data, size, model_name)
 
+    n_time = 50
     start = time.time()
-    raw_result = session.run([], {input_name: input_data})
+    for i in range(n_time):
+        raw_result = session.run([], {input_name: input_data})
     end = time.time()
-    print("inference cost time: {}".format(end - start))
+    print("inference cost time: {}".format((end - start) /n_time))
 
     res = postprocess(raw_result)
     raw_res = raw_result[0].reshape(-1)
