@@ -46,6 +46,11 @@ network_param = {
         "MEAN": None,
         "STDDEV": None
     },
+    "ghostnet": {
+        "TO_RGB": True,
+        "MEAN": [0.485, 0.456, 0.406],
+        "STDDEV": [0.229, 0.224, 0.225]
+    }
 }
 
 
@@ -60,10 +65,12 @@ def preprocess(input_data, size, model_name):
     img_data = input_data.astype(D_TYPE)
 
     # normalize
-    mean_vec = np.array(network_param[model_name]['MEAN'])
-    stddev_vec = np.array(network_param[model_name]['STDDEV'])
+    mean_vec = network_param[model_name]['MEAN']
+    stddev_vec = network_param[model_name]['STDDEV']
     
-    if (mean_vec != None) and (stddev_vec != None):
+    if (mean_vec is not None) and (stddev_vec is not None):
+        mean_vec = np.array(mean_vec)
+        stddev_vec = np.array(stddev_vec)
         norm_img_data = np.zeros(img_data.shape).astype(D_TYPE)
         for i in range(img_data.shape[0]):
             norm_img_data[i, :, :] = (img_data[i, :, :] / 255 - mean_vec[i]) / stddev_vec[i]
