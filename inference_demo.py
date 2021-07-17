@@ -4,12 +4,16 @@ import onnxruntime
 import onnx
 import cv2
 
+import os
 import argparse
 import json
 import time
 
 
 D_TYPE = "float32"
+LABLES_FILE = "imagenet-simple-labels.json"
+IMG_FILE = "space_shuttle_299x299.jpg"
+
 
 network_param = {
     "shufflenetv1": {
@@ -36,7 +40,12 @@ network_param = {
         "TO_RGB": True,
         "MEAN": [0.485, 0.456, 0.406],
         "STDDEV": [0.229, 0.224, 0.225]
-    }
+    },
+    "efficientnet_b0_keras": {
+        "TO_RGB": True,
+        "MEAN": None,
+        "STDDEV": None
+    },
 }
 
 
@@ -53,13 +62,16 @@ def preprocess(input_data, size, model_name):
     # normalize
     mean_vec = np.array(network_param[model_name]['MEAN'])
     stddev_vec = np.array(network_param[model_name]['STDDEV'])
-
-    norm_img_data = np.zeros(img_data.shape).astype(D_TYPE)
-    for i in range(img_data.shape[0]):
-        norm_img_data[i, :, :] = (img_data[i, :, :] / 255 - mean_vec[i]) / stddev_vec[i]
+    
+    if (mean_vec != None) and (stddev_vec != None):
+        norm_img_data = np.zeros(img_data.shape).astype(D_TYPE)
+        for i in range(img_data.shape[0]):
+            norm_img_data[i, :, :] = (img_data[i, :, :] / 255 - mean_vec[i]) / stddev_vec[i]
+    else:
+        norm_img_data = img_data
 
     # add batch channel
-    norm_img_data = norm_img_data.reshape(1, 3, size, size).astype(D_TYPE)
+    norm_img_data = np.expand_dims(norm_img_data, axis=0)
     return norm_img_data
 
 
@@ -82,7 +94,8 @@ if __name__ == '__main__':
     print(args)
     model_name = args.model_name
     onnx_name = "{}.onnx".format(model_name)
-    session = onnxruntime.InferenceSession(onnx_name, None)
+    onnx_file = os.path.join("models", onnx_name)
+    session = onnxruntime.InferenceSession(onnx_file, None)
 
     # get the name of the first input of the model
     inputs = session.get_inputs()[0]
@@ -90,10 +103,11 @@ if __name__ == '__main__':
     input_shape = inputs.shape
     print('Input Name:', input_name)
     print('Input Shape:', input_shape)
-    size = input_shape[3]
+    size = input_shape[2]
 
-    labels = load_labels('imagenet-simple-labels.json')
-    image = cv2.imread('space_shuttle_299x299.jpg')
+    labels = load_labels(LABLES_FILE)
+    image = cv2.imread(IMG_FILE)
+
     if network_param[model_name]['TO_RGB']:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = cv2.resize(image, (size, size))
